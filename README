@@ -1,0 +1,5 @@
+Required modules:
+Moose
+MooseX::NonMoose
+AnyEvent::IRC
+LWP::Simple (for WebTitle plugin)
