@@ -96,12 +96,14 @@ sub BUILD {
 		},
 		publicmsg => sub {
 			my ($client, $channel, $params) = @_;
-			my $thr = threads->create(
-				sub { $self->handle_pubmsg(@_) },
-				$channel,
-				$params,
-			);
-			$thr->detach();
+			foreach my $plugin ($self->list_plugins) {
+				my $thr = threads->create(
+					sub { $plugin->publicmsg(@_) },
+					$channel,
+					$params,
+				);
+				$thr->detach();
+			}
 		},
 		registered => sub {
 			my $client = shift;
@@ -129,13 +131,6 @@ sub log {
 	my ($self, @args) = @_;
 	if ($self->verbose) {
 		say @args;
-	}
-}
-
-sub handle_pubmsg {
-	my ($self, $channel, $params) = @_;
-	foreach my $plugin ($self->list_plugins) {
-		$plugin->publicmsg($channel, $params);
 	}
 }
 
