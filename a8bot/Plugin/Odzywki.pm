@@ -9,7 +9,7 @@ tie my %db, 'Tie::RegexpHash';
 	qr/.*chuj.*/i		=> \&chuj,
 	qr/.*dupa.*/i		=> \&dupa,
 	qr/.*spierdalaj.*/i	=> \&spierdalaj,
-	qr/.*jeb[ię|ać|ie|e]/.* => \&jebac
+	qr/.*jeb[ię|ać|ie|e].*/ => \&jebac
 );
 
 
@@ -19,70 +19,70 @@ sub init {
 
 sub pubmsg {
 	my ($bot, $data) = @_;
-	if(eval '$db{$data->{msg}}->()'){
-		return "$data->{nick}: ".$db{$data->{msg}}->();
+	if (my $resp = $db{$data->{msg}}->()) {
+		return "$data->{nick}: " . $resp;
 	}
-	
+
 }
 
 sub chuj {
-	my $rand = int(rand(100)/11);
-	CASE: {
-		if($rand == 0){return 'Nasi dziadowie na mchu jadali!'; last CASE}
-		if($rand == 1){return 'Trzy ruchy i suchy?'; last CASE}
-		if($rand == 2){return 'Chuj Ci w dupie chodzi!'; last CASE}
-		if($rand == 3){return 'Musisz przyznać, że jak tatuś zrobi dzióbek, to nie ma chuja we wsi.'; last CASE}
-		if($rand == 4){return 'A na chuj mnie ten kaktus?!'; last CASE}
-		if($rand == 5){return 'Grozisz mi!?'; last CASE}
-		if($rand == 6){return 'Repeat, please: „My pen is...”.'; last CASE}
-		if($rand == 7){return 'Kurwa, Bomba, jesteś głuchy, czy pierdolnięty?'; last CASE}
-		if($rand == 8){return 'Jako i Ty szlachetny Panie.'; last CASE}
-	}
+	my @resp = (
+		'Nasi dziadowie na mchu jadali!',
+		'Trzy ruchy i suchy?',
+		'Chuj Ci w dupie chodzi!',
+		'Musisz przyznać, że jak tatuś zrobi dzióbek, to nie ma chuja we wsi.',
+		'Grozisz mi!?',
+		'A na chuj mnie ten kaktus?!',
+		'Repeat, please: „My pen is...”.',
+		'Kurwa, Bomba, jesteś głuchy, czy pierdolnięty?',
+		'Jako i Ty szlachetny Panie.'
+	);
+	return $resp[rand($#resp)];
 }
 
 sub dupa {
-	my $rand = int(rand(100)/30);
-	CASE: {
-		if($rand == 0){return 'Wypiąć bardziej, niech nie kuli jak pies przy kupci.'; last CASE}
-		if($rand == 1){return 'Poglądy są jak dupa, każdy jakieś ma, ale po co od razu pokazywać...'; last CASE}
-	}
+	my @resp = (
+		'Wypiąć bardziej, niech nie kuli jak pies przy kupci.',
+		'Poglądy są jak dupa, każdy jakieś ma, ale po co od razu pokazywać...'
+	);
+	return $resp[rand($#resp)];
 }
 
 sub jebac {
-	my $rand = init(rand(100)/90);
-	CASE: {
-		if($rand == 0){return 'Zamilcz kobieto, bo nie wiesz co czynisz!'; last CASE}
-	}
+	my @resp = (
+		'Zamilcz kobieto, bo nie wiesz co czynisz!'
+	);
+	return $resp[rand($#resp)];
 }
 
 sub kurwa {
-	my $rand = int(rand(100)/11);
-	CASE: {
-		if($rand == 0){return 'Też kobieta. Tylko pizda nie ta.'; last CASE}
-		if($rand == 1){return 'O! Ty też?'; last CASE}
-		if($rand == 2){return 'Też dziewczyna. Tylko krocze ma robocze.'; last CASE}
-		if($rand == 3){return 'To be, kurwa! Or nor to be!', last CASE}
-		if($rand == 4){return 'Dżizus, kurwa, ja pierdolę!'; last CASE}
-		if($rand == 5){return 'Dawno temu ja też zaufałem pewnej kobiecie, wtedy dałbym sobie za nią rękę uciąć. I wiesz, co... I bym teraz, kurwa, nie miał ręki!'; last CASE}
-		if($rand == 6){return 'Trzeba płacić. W paszczu pięćdziesiąt, a za seks...'; last CASE}
-		if($rand == 7){return 'Lubisz to suko!'; last CASE}
-	}
+	my @resp = (
+		'Też kobieta. Tylko pizda nie ta.',
+		'O! Ty też?',
+		'Też dziewczyna. Tylko krocze ma robocze.',
+		'To be, kurwa! Or nor to be!',
+		'Dżizus, kurwa, ja pierdolę!',
+		'Dawno temu ja też zaufałem pewnej kobiecie, wtedy dałbym sobie za nią rękę uciąć. I wiesz, co... I bym teraz, kurwa, nie miał ręki!',
+		'Trzeba płacić. W paszczu pięćdziesiąt, a za seks...',
+		'Lubisz to suko!'
+	);
+	return $resp[rand($#resp)];
 }
 
 sub spierdalaj {
-	my $rand = int(rand(100)/25);
-	CASE: {
-		if($rand == 0){return 'Jakie „spierdalaj”, sam spierdalaj z tym bufetem, bo mi tapicerkę zapaćkasz! '; last CASE}
-		if($rand == 1){return 'Dobra! To chuj ci w dupę, stary! Ja tu na deszczu, wilki jakieś! Przyrzekaliśmy sobie ten film od lat, ale jak nie, to nie!'; last CASE}
-	}
+	my @resp = (
+		'Jakie „spierdalaj”, sam spierdalaj z tym bufetem, bo mi tapicerkę zapaćkasz!',
+		'Dobra! To chuj ci w dupę, stary! Ja tu na deszczu, wilki jakieś! Przyrzekaliśmy sobie ten film od lat, ale jak nie, to nie!'
+	);
+	return $resp[rand($#resp)];
 }
 
 sub ty_chuju {
-	my $rand = int(rand(100)/30);
-	CASE: {
-		if($rand == 0){return 'Jak śmiesz nazywać mnie cwelem, pierdolona cioto! Moja dupa jest ciasna jak po praniu! A twoja matka to chuj!'; last CASE}
-		if($rand == 1){return 'Nigdy cię nie lubiłem. Nie okazywałaś mi szacunku, w twoich oczach widziałem tylko pogardę. A to boli. Jak drzazga w fiucie. '; last CASE}
-	}
+	my @resp = (
+		'Jak śmiesz nazywać mnie cwelem, pierdolona cioto! Moja dupa jest ciasna jak po praniu! A twoja matka to chuj!',
+		'Nigdy cię nie lubiłem. Nie okazywałaś mi szacunku, w twoich oczach widziałem tylko pogardę. A to boli. Jak drzazga w fiucie.'
+		);
+	return $resp[rand($#resp)];
 }
 
 1;
