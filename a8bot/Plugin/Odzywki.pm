@@ -19,12 +19,13 @@ sub init {
 
 sub pubmsg {
 	my ($bot, $data) = @_;
-	return "$data->{nick}: ".$db{$data->{msg}}->();
-	
+	if (my $resp = $db{$data->{msg}}->()) {
+		return "$data->{nick}: " . $resp;
+	}
+
 }
 
 sub chuj {
-	my $rand = int(rand(100)/11);
 	my @resp = (
 		'Nasi dziadowie na mchu jadali!',
 		'Trzy ruchy i suchy?',
@@ -36,29 +37,25 @@ sub chuj {
 		'Kurwa, Bomba, jesteś głuchy, czy pierdolnięty?',
 		'Jako i Ty szlachetny Panie.'
 	);
-	return $resp[$rand] ? $resp[$rand] : undef;
+	return $resp[rand($#resp)];
 }
 
 sub dupa {
-	my $rand = int(rand(100)/30);
 	my @resp = (
 		'Wypiąć bardziej, niech nie kuli jak pies przy kupci.',
 		'Poglądy są jak dupa, każdy jakieś ma, ale po co od razu pokazywać...'
 	);
-	return $resp[$rand] ? $resp[$rand] : undef;
+	return $resp[rand($#resp)];
 }
 
 sub jebac {
-#	my $rand = init(rand(100)/90);
-	my $rand = 0;
 	my @resp = (
 		'Zamilcz kobieto, bo nie wiesz co czynisz!'
 	);
-	return $resp[$rand] ? $resp[$rand] : undef;
+	return $resp[rand($#resp)];
 }
 
 sub kurwa {
-	my $rand = int(rand(100)/11);
 	my @resp = (
 		'Też kobieta. Tylko pizda nie ta.',
 		'O! Ty też?',
@@ -69,25 +66,23 @@ sub kurwa {
 		'Trzeba płacić. W paszczu pięćdziesiąt, a za seks...',
 		'Lubisz to suko!'
 	);
-	return $resp[$rand] ? $resp[$rand] : undef;
+	return $resp[rand($#resp)];
 }
 
 sub spierdalaj {
-	my $rand = int(rand(100)/25);
 	my @resp = (
 		'Jakie „spierdalaj”, sam spierdalaj z tym bufetem, bo mi tapicerkę zapaćkasz!',
 		'Dobra! To chuj ci w dupę, stary! Ja tu na deszczu, wilki jakieś! Przyrzekaliśmy sobie ten film od lat, ale jak nie, to nie!'
 	);
-	return $resp[$rand] ? $resp[$rand] : undef;
+	return $resp[rand($#resp)];
 }
 
 sub ty_chuju {
-	my $rand = int(rand(100)/30);
 	my @resp = (
 		'Jak śmiesz nazywać mnie cwelem, pierdolona cioto! Moja dupa jest ciasna jak po praniu! A twoja matka to chuj!',
 		'Nigdy cię nie lubiłem. Nie okazywałaś mi szacunku, w twoich oczach widziałem tylko pogardę. A to boli. Jak drzazga w fiucie.'
 		);
-	return $resp[$rand] ? $resp[$rand] : undef;
+	return $resp[rand($#resp)];
 }
 
 1;
