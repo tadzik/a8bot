@@ -1,5 +1,5 @@
 package a8bot::Plugin;
-use feature ':5.12';
+use feature ':5.10';
 use Moose;
 use Data::Dumper;
 
@@ -81,11 +81,11 @@ sub publicmsg {
 }
 
 sub registered {
-#	my $self = shift;
-#	my $resp = $self->call_registered({ nick => $self->bot->{nick} });
-#	if (ref $resp eq 'ARRAY') {
-#		$self->bot->send_srv(@$resp);
-#	}
+	my $self = shift;
+	my $resp = $self->call_registered({ nick => $self->bot->{nick} });
+	if (ref $resp eq 'ARRAY') {
+		$self->bot->send_srv(@$resp);
+	}
 }
 
 __PACKAGE__->meta->make_immutable;

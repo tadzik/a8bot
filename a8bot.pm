@@ -1,5 +1,5 @@
 package a8bot;
-use feature ':5.12';
+use feature ':5.10';
 use a8bot::Plugin;
 use Moose;
 use MooseX::NonMoose;
