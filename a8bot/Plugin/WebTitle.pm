@@ -1,5 +1,5 @@
 package a8bot::Plugin::WebTitle;
-use LWP::Simple;
+use LWP::Simple qw /get $ua/;
 
 sub init {
 	return { publicmsg => \&pubmsg };
@@ -8,7 +8,7 @@ sub init {
 sub pubmsg {
 	my ($bot, $data) = @_;
 	if ($data->{msg} =~ /(http:\/\/[^ ]+)/) {
-		print "Got url: $1\n";
+		$ua->max_size(1024);
 		my $site = get($1);
 		my ($title) = $site =~ /<title>([^<]+)<\/title>/;
 		if ($title) {
