@@ -1,9 +1,9 @@
 use a8bot;
 
 my $bot = a8bot->new(
-	channel	=> '#bottest',
-	server	=> 'irc.pirc.pl',
-	nick	=> 'm18',
+	channel	=> '#somechannel',
+	server	=> 'irc.freenode.pl',
+	nick	=> 'a8bot',
 	verbose	=> 1,
 );
 
