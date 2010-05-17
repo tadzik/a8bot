@@ -1,6 +1,7 @@
 package a8bot;
 use feature ':5.10';
 use a8bot::Plugin;
+use threads;
 use Moose;
 use MooseX::NonMoose;
 use Module::Pluggable sub_name => 'pluggable', require => 1;
@@ -96,7 +97,12 @@ sub BUILD {
 		publicmsg => sub {
 			my ($client, $channel, $params) = @_;
 			foreach my $plugin ($self->list_plugins) {
-				$plugin->publicmsg($channel, $params);
+				my $thr = threads->create(
+					sub { $plugin->publicmsg(@_) },
+					$channel,
+					$params,
+				);
+				$thr->detach();
 			}
 		},
 		registered => sub {
@@ -127,6 +133,7 @@ sub log {
 		say @args;
 	}
 }
+
 # Tu się zaczyna ten cały burdel
 sub run {
 	my $self = shift;
