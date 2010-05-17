@@ -19,9 +19,7 @@ sub init {
 
 sub pubmsg {
 	my ($bot, $data) = @_;
-	if(eval '$db{$data->{msg}}->()'){
-		return "$data->{nick}: ".$db{$data->{msg}}->();
-	}
+	return "$data->{nick}: ".$db{$data->{msg}}->();
 	
 }
 
