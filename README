@@ -6,3 +6,4 @@ Required modules:
 	AnyEvent::IRC
 	LWP::Simple (for WebTitle plugin)
 	Hash::MultiValue (for Powiedz plugin)
+	Tie::RegexpHash (for Odzywki plugin)
