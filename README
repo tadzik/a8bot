@@ -3,3 +3,4 @@ Moose
 MooseX::NonMoose
 AnyEvent::IRC
 LWP::Simple (for WebTitle plugin)
+Hash::MultiValue (for Powiedz plugin)

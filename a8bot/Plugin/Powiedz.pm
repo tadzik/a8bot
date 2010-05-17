@@ -1,8 +1,9 @@
 package a8bot::Plugin::Powiedz;
 use strict;
 use warnings;
+use Hash::MultiValue;
 
-my @db;
+my $db = Hash::MultiValue->new;
 
 sub init {
 	return { publicmsg => \&pubmsg };
@@ -10,15 +11,20 @@ sub init {
 
 sub pubmsg {
 	my ($bot, $data) = @_;
-	my $resp;
+	my $resp = '';
 	if ($data->{msg} =~ /^$bot->{nick},?:? powiedz ([^,: ]+)[:,]? (.+)$/) {
-		push @db, "$1: $data->{nick} kazał Ci powiedzieć: $2";
-		$resp = "$data->{nick}: ok, powiem mu jak się pojawi";
+		$db->add($1 => [$data->{nick}, $2]);
+		$resp = "$data->{nick}: ok, powiem mu jak się pojawi.";
 	}
-	my @wanted = grep /^$data->{nick}: /, @db;
-	if (@wanted) {
-	$resp = join ' ', @wanted;
-		@db = grep !/^$data->{nick}: /, @db;
+	if ($db->get($data->{nick})) {
+		my @msgs = $db->get_all($data->{nick});
+		for my $msg (@msgs) {
+			if ($resp ne '') {
+				$resp .= ' Poza tym, ';
+			}
+			$resp .= "$msg->[0] kazał Ci powiedzieć: $msg->[1].";
+		}
+		$db->remove($data->{nick});
 	}
 	return $resp;
 }
