@@ -9,7 +9,7 @@ tie my %db, 'Tie::RegexpHash';
 	qr/.*chuj.*/i		=> \&chuj,
 	qr/.*dupa.*/i		=> \&dupa,
 	qr/.*spierdalaj.*/i	=> \&spierdalaj,
-	qr/.*jeb(ię|ać|ie|e)/.* => \&jebac
+	qr/.*jeb[ię|ać|ie|e]/.* => \&jebac
 );
 
 
