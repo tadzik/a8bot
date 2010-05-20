@@ -19,6 +19,7 @@ sub init {
 
 sub pubmsg {
 	my ($bot, $data) = @_;
+	return if int(rand(2));
 	if (my $resp = $db{$data->{msg}}) {
 		return "$data->{nick}: " . &$resp;
 	}
