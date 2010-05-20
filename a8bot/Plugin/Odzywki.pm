@@ -19,10 +19,9 @@ sub init {
 
 sub pubmsg {
 	my ($bot, $data) = @_;
-	if (my $resp = $db{$data->{msg}}->()) {
-		return "$data->{nick}: " . $resp;
+	if (my $resp = $db{$data->{msg}}) {
+		return "$data->{nick}: " . &$resp;
 	}
-
 }
 
 sub chuj {
