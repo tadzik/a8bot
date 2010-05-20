@@ -1,4 +1,4 @@
-package a8bot::Plugin::Ping;
+package Ping;
 # example plugin for a8bot
 
 # a plugin MUST have an 'init' subroutine, returning a hash with keys

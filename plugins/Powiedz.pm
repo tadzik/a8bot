@@ -1,4 +1,4 @@
-package a8bot::Plugin::Powiedz;
+package Powiedz;
 use strict;
 use warnings;
 use Hash::MultiValue;

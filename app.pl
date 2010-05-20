@@ -7,6 +7,8 @@ my $bot = a8bot->new(
 	verbose	=> 1,
 );
 
+$bot->load_plugin('Ping');
+
 #$SIG{INT} = sub { $bot->cleanup };
 #$SIG{TERM} = sub { $bot->cleanup };
 

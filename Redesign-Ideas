@@ -1,6 +1,4 @@
 + Plugins more user-controlled:
-	- The actual app something more than a8bot->new->run
-	- Stuff like $obj->add_plugin()
 	- Register plugins per keyword
 		· less calling, only the wanted plugins get called
 		· also no crap when 2 plugins start to respond

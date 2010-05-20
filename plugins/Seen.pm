@@ -1,4 +1,4 @@
-package a8bot::Plugin::Seen;
+package Seen;
 use POSIX 'strftime';
 
 my %log;

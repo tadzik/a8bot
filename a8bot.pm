@@ -1,15 +1,10 @@
 package a8bot;
 use feature ':5.10';
 use a8bot::Plugin;
-use threads;
 use Moose;
 use MooseX::NonMoose;
-use Module::Pluggable sub_name => 'pluggable', require => 1;
 use AnyEvent;
 use AnyEvent::IRC::Client;
-# temporary?
-use Carp::Always::Color;
-use Data::Dumper;
 
 extends 'AnyEvent::IRC::Client';
 
@@ -75,13 +70,6 @@ has 'wantconnection' => (
 
 sub BUILD {
 	my $self = shift;
-	foreach my $plugin ($self->pluggable) {
-		my $plug = a8bot::Plugin->new(
-			bot => $self,
-			plugin => $plugin,
-		);
-		$self->add_plugin($plug);
-	}
 	$self->reg_cb(
 		disconnect => sub {
 			if ($self->wantconnection) {
@@ -97,12 +85,7 @@ sub BUILD {
 		publicmsg => sub {
 			my ($client, $channel, $params) = @_;
 			foreach my $plugin ($self->list_plugins) {
-				my $thr = threads->create(
-					sub { $plugin->publicmsg(@_) },
-					$channel,
-					$params,
-				);
-				$thr->detach();
+				$plugin->publicmsg($channel, $params);
 			}
 		},
 		registered => sub {
@@ -127,6 +110,15 @@ sub BUILD {
 #	exit 0;
 #}
 
+sub load_plugin {
+	my ($self, $plugin) = @_;
+	my $plug = a8bot::Plugin->new(
+		bot	=> $self,
+		plugin	=> $plugin,
+	);
+	$self->add_plugin($plug);
+}
+
 sub log {
 	my ($self, @args) = @_;
 	if ($self->verbose) {
@@ -149,57 +141,3 @@ sub run {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-__END__
-
-=pod
-
-=head2 Small guide to orders
-
-A plugin's callback function should return an array of orders for the bot to execute.
-Order is a hash, with an obligatory key 'type', and some other, depending on a type.
-Something like this:
-
-  return [
-  	{ type => 'privmsg', arg1 => 'foo', arg2 => 'bar' },
-	{ type => 'other', args => ['foo', 'bar', 'baz'] },
-  ];
-
-Where type should be one of the following:
-
-=over 4
-
-=item privmsg
-
-Arguments for privmsg should be:
-
-=over 2
-
-=item to (string)
-
-User (or channel) to send a message to.
-
-=item msg (string)
-
-The message itself. Simple, huh?
-
-=back
-
-=item mode
-
-Arguments for mode
-
-=over 2
-
-=item args (array)
-
-Array of arguments for AnyEvent's MODE call.
-B<Note>: this is likely to suck less in the near future.
-
-Example: { type => 'mode', args = ['username', '+b'] }
-
-=back
-
-=back
-
-=cut
