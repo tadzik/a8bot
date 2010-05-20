@@ -1,7 +1,6 @@
 package a8bot::Plugin;
 use feature ':5.10';
 use Moose;
-use Data::Dumper;
 
 has 'bot' => (
 	is		=> 'ro',

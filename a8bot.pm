@@ -1,15 +1,11 @@
 package a8bot;
 use feature ':5.10';
 use a8bot::Plugin;
-use threads;
 use Moose;
 use MooseX::NonMoose;
 use Module::Pluggable sub_name => 'pluggable', require => 1;
 use AnyEvent;
 use AnyEvent::IRC::Client;
-# temporary?
-use Carp::Always::Color;
-use Data::Dumper;
 
 extends 'AnyEvent::IRC::Client';
 
@@ -97,12 +93,7 @@ sub BUILD {
 		publicmsg => sub {
 			my ($client, $channel, $params) = @_;
 			foreach my $plugin ($self->list_plugins) {
-				my $thr = threads->create(
-					sub { $plugin->publicmsg(@_) },
-					$channel,
-					$params,
-				);
-				$thr->detach();
+				$plugin->publicmsg($channel, $params);
 			}
 		},
 		registered => sub {
