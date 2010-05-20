@@ -1,4 +1,4 @@
-package a8bot::Plugin::WebTitle;
+package WebTitle;
 use LWP::Simple qw /get $ua/;
 
 sub init {

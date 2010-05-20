@@ -3,7 +3,6 @@ use feature ':5.10';
 use a8bot::Plugin;
 use Moose;
 use MooseX::NonMoose;
-use Module::Pluggable sub_name => 'pluggable', require => 1;
 use AnyEvent;
 use AnyEvent::IRC::Client;
 
@@ -71,13 +70,6 @@ has 'wantconnection' => (
 
 sub BUILD {
 	my $self = shift;
-	foreach my $plugin ($self->pluggable) {
-		my $plug = a8bot::Plugin->new(
-			bot => $self,
-			plugin => $plugin,
-		);
-		$self->add_plugin($plug);
-	}
 	$self->reg_cb(
 		disconnect => sub {
 			if ($self->wantconnection) {
@@ -117,6 +109,15 @@ sub BUILD {
 #	# TODO: Let the plugins know
 #	exit 0;
 #}
+
+sub load_plugin {
+	my ($self, $plugin) = @_;
+	my $plug = a8bot::Plugin->new(
+		bot	=> $self,
+		plugin	=> $plugin,
+	);
+	$self->add_plugin($plug);
+}
 
 sub log {
 	my ($self, @args) = @_;

@@ -1,4 +1,4 @@
-package a8bot::Plugin::Odzywki;
+package Odzywki;
 use Tie::RegexpHash;
 
 tie my %db, 'Tie::RegexpHash';
