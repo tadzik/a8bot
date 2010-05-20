@@ -2,6 +2,7 @@ package Odzywki;
 use Tie::RegexpHash;
 
 tie my %db, 'Tie::RegexpHash';
+$lastresponse = 0;
 
 %db = (
 	qr/.*kurwa.*/i		=> \&kurwa,
@@ -19,9 +20,11 @@ sub init {
 
 sub pubmsg {
 	my ($bot, $data) = @_;
-	return if int(rand(2));
-	if (my $resp = $db{$data->{msg}}) {
-		return "$data->{nick}: " . &$resp;
+	if (time - $lastresponse > 120) {
+		if (my $resp = $db{$data->{msg}}) {
+			$lastresponse = time;
+			return "$data->{nick}: " . &$resp;
+		}
 	}
 }
 
