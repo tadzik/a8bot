@@ -26,7 +26,11 @@ sub pubmsg {
 		}
 		$db->remove($data->{nick});
 	}
-	return $resp;
+	if ($resp ne '') {
+		return $resp;
+	} else {
+		return undef;
+	}
 }
 
 1;

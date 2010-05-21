@@ -11,12 +11,9 @@ sub pubmsg {
 		$ua->max_size(1024);
 		my $site = get($1);
 		my ($title) = $site =~ /<title>([^<]+)<\/title>/;
-		if ($title) {
-			return "[ $title ]";
-		} else {
-			return undef;
-		}
+		return "[ $title ]" if $title;
 	}
+	return undef;
 }
 
 1;

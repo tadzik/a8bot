@@ -1,6 +1,7 @@
 package a8bot::Plugin;
 use feature ':5.10';
 use lib 'plugins';
+use Module::Load;
 use Moose;
 
 has 'bot' => (
@@ -48,7 +49,7 @@ has '_registered' => (
 
 sub BUILD {
 	my $self = shift;
-	require $self->plugin . '.pm';
+	load $self->plugin;
 	my $events = $self->plugin->init;
 	$self->_disconnect($events->{disconnect} // sub {});
 	$self->_publicmsg($events->{publicmsg} // sub {});

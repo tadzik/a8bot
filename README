@@ -1,5 +1,3 @@
-Needs Perl compiled with threads
-
 Required modules:
 	Moose
 	MooseX::NonMoose

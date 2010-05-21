@@ -13,6 +13,7 @@ sub pubmsg {
 	if ($data->{msg} =~ /^$bot->{nick}:?,? ping$/) {
 		return [PRIVMSG => $data->{channel}, "$data->{nick}: pong"];
 	}
+	return undef;
 }
 
 1;

@@ -83,7 +83,7 @@ sub BUILD {
 			}
 		},
 		error => sub {
-			my ($code, $message, $ircmsg) = @_;
+			my (undef, $code, $message, $ircmsg) = @_;
 			$self->log("Error $code: $message");
 		},
 		publicmsg => sub {
