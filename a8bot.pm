@@ -82,6 +82,10 @@ sub BUILD {
 				);
 			}
 		},
+		error => sub {
+			my ($code, $message, $ircmsg) = @_;
+			$self->log("Error $code: $message");
+		},
 		publicmsg => sub {
 			my ($client, $channel, $params) = @_;
 			foreach my $plugin ($self->list_plugins) {
