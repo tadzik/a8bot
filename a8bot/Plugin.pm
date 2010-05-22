@@ -77,7 +77,7 @@ sub publicmsg {
 	);
 	if (ref $resp eq 'ARRAY') {
 		$self->bot->send_srv(@$resp);
-	} elsif (defined $resp) {
+	} elsif (defined $resp and $resp ne '') {
 		$self->bot->send_srv(PRIVMSG => $channel, $resp);
 	}
 }
