@@ -1,6 +1,7 @@
 package a8bot;
 use feature ':5.10';
 use a8bot::Plugin;
+use Module::Load;
 use Moose;
 use MooseX::NonMoose;
 use AnyEvent;
@@ -37,7 +38,7 @@ has 'passwd' => (
 
 has 'plugins' => (
 	is		=> 'rw',
-	isa		=> 'ArrayRef[a8bot::Plugin]',
+	isa		=> 'ArrayRef',
 	default		=> sub { [] },
 	traits		=> [ 'Array' ],
 	handles		=> {
@@ -87,9 +88,9 @@ sub BUILD {
 			$self->log("Error $code: $message");
 		},
 		publicmsg => sub {
-			my ($client, $channel, $params) = @_;
+			my $params = $_[2];
 			foreach my $plugin ($self->list_plugins) {
-				$plugin->publicmsg($channel, $params);
+				$plugin->pubmsg_cb($params);
 			}
 		},
 		registered => sub {
@@ -99,7 +100,7 @@ sub BUILD {
 			# logging purposes
 			$client->enable_ping(60);
 			foreach my $plugin ($self->list_plugins) {
-				$plugin->registered;
+				$plugin->registered_cb;
 			}
 		},
 	);
@@ -116,10 +117,8 @@ sub BUILD {
 
 sub load_plugin {
 	my ($self, $plugin) = @_;
-	my $plug = a8bot::Plugin->new(
-		bot	=> $self,
-		plugin	=> $plugin,
-	);
+	load $plugin;
+	my $plug = $plugin->new(bot => $self);
 	$self->add_plugin($plug);
 }
 

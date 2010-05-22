@@ -1,8 +1,6 @@
 package a8bot::Plugin;
 use feature ':5.10';
-use lib 'plugins';
-use Module::Load;
-use Moose;
+use Moose::Role;
 
 has 'bot' => (
 	is		=> 'ro',
@@ -11,70 +9,34 @@ has 'bot' => (
 	documentation	=> 'The a8bot object owning the plugins',
 );
 
-# The actual module being handled
-has 'plugin' => (
-	is		=> 'ro', # why rw?
-	required	=> 1,
-	documentation	=> 'The module which is being handled',
+has 'keyword' => (
+	is		=> 'rw',
+	isa		=> 'Str',
+	documentation	=> 'A specific keyword plugin reacts on',
 );
 
-# this keeps whether the plugin reacts on certain types
-# of AE::IRC::Client events
-has '_disconnect' => (
-	is	=> 'rw',
-	isa	=> 'CodeRef',
-	traits	=> [ 'Code' ],
-	handles	=> {
-		call_disconnect => 'execute',
+has 'keyword_cb' => (
+	is		=> 'rw',
+	isa		=> 'CodeRef',
+	traits		=> [ 'Code' ],
+	handles		=> {
+		handle_direct	=> 'execute',
 	},
+	default		=> sub { sub {} },
 );
 
-has '_publicmsg' => (
-	is	=> 'rw',
-	isa	=> 'CodeRef',
-	traits	=> [ 'Code' ],
-	handles	=> {
-		call_publicmsg	=> 'execute',
+has 'passive_cb' => (
+	is		=> 'rw',
+	isa		=> 'CodeRef',
+	traits		=> [ 'Code' ],
+	handles		=> {
+		handle_passive	=> 'execute',
 	},
+	default		=> sub { sub {} },
 );
 
-has '_registered' => (
-	is	=> 'rw',
-	isa	=> 'CodeRef',
-	traits	=> [ 'Code' ],
-	handles	=> {
-		call_registered => 'execute',
-	},
-);
-
-sub BUILD {
-	my $self = shift;
-	load $self->plugin;
-	my $events = $self->plugin->init;
-	$self->_disconnect($events->{disconnect} // sub {});
-	$self->_publicmsg($events->{publicmsg} // sub {});
-	$self->_registered($events->{registered} // sub {});
-}
-
-sub publicmsg {
-	my ($self, $channel, $params) = @_;
-	my ($nick, $host, $msg);
-	($nick, $host) = split(/!/, $params->{prefix});
-	(undef, $msg) = @{$params->{params}};
-	# TODO: Maybe just params itself,
-	# as an additional arg, just in case
-	my $resp = $self->call_publicmsg(
-		{
-			nick	=> $self->bot->nick,
-		},
-		{
-			nick	=> $nick,
-			host	=> $host,
-			command	=> $params->{command},
-			channel	=> $channel,
-			msg	=> $msg,
-		},
-	);
+sub handle_resp {
+	my ($self, $channel, $resp) = @_;
 	if (ref $resp eq 'ARRAY') {
 		$self->bot->send_srv(@$resp);
 	} elsif (defined $resp) {
@@ -82,26 +44,42 @@ sub publicmsg {
 	}
 }
 
-sub registered {
+sub pubmsg_cb {
+	my ($self, $params) = @_;
+	my ($channel, $nick, $host, $msg);
+	($nick, $host) = split(/!/, $params->{prefix});
+	($channel, $msg) = @{$params->{params}};
+	my %args = (
+		nick	=> $nick,
+		host	=> $host,
+		command	=> $params->{command},
+		channel	=> $channel,
+		msg	=> $msg,
+	);
+	$self->handle_resp($channel, $self->handle_passive(%args));
+	if ($self->keyword) {
+		my $nick = $self->bot->nick;
+		my $comm = $self->keyword;
+		if ($msg =~ /^$nick:?,? ($comm) ?(.+)?$/) {
+			if ($2) {
+				my @foo = split / /, $2;
+				$args{args} = \@foo;
+			}
+			$self->handle_resp(
+				$channel,
+				$self->handle_direct(%args),
+			);
+		}
+	}
+}
+
+sub registered_cb {
 	my $self = shift;
-	my $resp = $self->call_registered({ nick => $self->bot->{nick} });
+	return unless $self->can('registered');
+	my $resp = $self->registered;
 	if (ref $resp eq 'ARRAY') {
 		$self->bot->send_srv(@$resp);
 	}
 }
 
-__PACKAGE__->meta->make_immutable;
-
 1;
-
-__END__
-sub _mode {
-	my ($self, @args) = @_;
-	$self->send_srv(MODE => @args);
-}
-
-sub _privmsg {
-	my ($self, $to, $msg) = @_;
-	say "_privmsg: sending a message to $to";
-	$self->send_srv(PRIVMSG => $to, $msg);
-}
