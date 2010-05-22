@@ -10,13 +10,11 @@ sub pubmsg {
 	if ($data->{msg} =~ /(http:\/\/[^ ]+)/) {
 		$ua->max_size(1024);
 		my $site = get($1);
-		my ($title) = $site =~ /<title>([^<]+)<\/title>/;
-		if ($title) {
-			return "[ $title ]";
-		} else {
-			return undef;
-		}
+		my ($title) = $site =~ /<title>([^<]+)<\/title>/i;
+		$title =~ s/\n/ /g;
+		return "[ $title ]" if $title;
 	}
+	return undef;
 }
 
 1;
