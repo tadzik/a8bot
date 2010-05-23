@@ -31,7 +31,7 @@ sub store {
 
 sub check {
 	my ($self, %data) = @_;
-	return unless $data{args};
+	return "$data{nick}: Usage: seen <nick>" unless $data{args};
 	my $who = $data{args}->[0];
 	my $res = $self->get_entry($who);
 	if (defined $res) {
