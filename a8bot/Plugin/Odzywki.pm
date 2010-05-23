@@ -1,31 +1,30 @@
-package Odzywki;
-use Tie::RegexpHash;
+package a8bot::Plugin::Odzywki;
+use feature ':5.10';
+use Moose;
+with 'a8bot::Plugin';
 
-tie my %db, 'Tie::RegexpHash';
-$lastresponse = 0;
+has 'lastresponse' => (is => 'rw', isa => 'Int', default => sub { 0 });
 
-%db = (
-	qr/.*kurwa.*/i		=> \&kurwa,
-	qr/.*ty chuju.*/i	=> \&ty_chuju,
-	qr/.*chuj.*/i		=> \&chuj,
-	qr/.*dupa.*/i		=> \&dupa,
-	qr/.*spierdalaj.*/i	=> \&spierdalaj,
-	qr/.*jeb[ię|ać|ie|e].*/ => \&jebac
-);
-
-
-sub init {
-	return { publicmsg => \&pubmsg };
+sub BUILD {
+	my $self = shift;
+	$self->passive_cb(sub { pubmsg($self, @_) });
 }
 
 sub pubmsg {
-	my ($bot, $data) = @_;
-	if (time - $lastresponse > 120) {
-		if (my $resp = $db{$data->{msg}}) {
-			$lastresponse = time;
-			return "$data->{nick}: " . &$resp;
-		}
+	my ($self, %data) = @_;
+	my $resp;
+	return if time - $self->lastresponse < 120;
+	given ($data{msg}) {
+		when (/kurwa/i) { $resp = $self->kurwa };
+		when (/ty chuju/i) { $resp = $self->ty_chuju };
+		when (/chuj/i) { $resp = $self->chuj };
+		when (/dupa/i) { $resp = $self->dupa };
+		when (/spierdalaj/i) { $resp = $self->spierdalaj };
+		when (/jeb[ię|ać|ie|e]/i) { $resp = $self->jebac };
+		default { return undef };
 	}
+	$self->lastresponse(time);
+	return "$data{nick}: $resp";
 }
 
 sub chuj {
@@ -37,7 +36,6 @@ sub chuj {
 		'Grozisz mi!?',
 		'A na chuj mnie ten kaktus?!',
 		'Repeat, please: „My pen is...”.',
-		'Kurwa, Bomba, jesteś głuchy, czy pierdolnięty?',
 		'Jako i Ty szlachetny Panie.'
 	);
 	return $resp[rand($#resp)];
@@ -45,7 +43,6 @@ sub chuj {
 
 sub dupa {
 	my @resp = (
-		'Wypiąć bardziej, niech nie kuli jak pies przy kupci.',
 		'Poglądy są jak dupa, każdy jakieś ma, ale po co od razu pokazywać...'
 	);
 	return $resp[rand($#resp)];
@@ -63,11 +60,6 @@ sub kurwa {
 		'Też kobieta. Tylko pizda nie ta.',
 		'O! Ty też?',
 		'Też dziewczyna. Tylko krocze ma robocze.',
-		'To be, kurwa! Or nor to be!',
-		'Dżizus, kurwa, ja pierdolę!',
-		'Dawno temu ja też zaufałem pewnej kobiecie, wtedy dałbym sobie za nią rękę uciąć. I wiesz, co... I bym teraz, kurwa, nie miał ręki!',
-		'Trzeba płacić. W paszczu pięćdziesiąt, a za seks...',
-		'Lubisz to suko!'
 	);
 	return $resp[rand($#resp)];
 }
@@ -87,5 +79,7 @@ sub ty_chuju {
 		);
 	return $resp[rand($#resp)];
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
