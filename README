@@ -5,3 +5,4 @@ Required modules:
 	LWP (for WebTitle plugin)
 	Sys::SigAction (for WebTitle plugin)
 	Hash::MultiValue (for Powiedz plugin)
+	REST::Google::Search, HTML::Entities (for Google plugin)
