@@ -2,6 +2,7 @@ package a8bot::Plugin::WebTitle;
 use Moose;
 use LWP::UserAgent;
 use Sys::SigAction 'timeout_call';
+use Encode;
 with 'a8bot::Plugin';
 
 has 'ua' => (
@@ -28,7 +29,7 @@ sub pubmsg {
 				my ($title) = $site =~ /<title>([^<]+)<\/title>/i;
 				if ($title) {
 					$title =~ s/\n//g;
-					return "[ $title ]";
+					return encode('utf-8', "[ $title ]");
 				}
 			} else {
 				return '[ '.$site->status_line.' ]';
