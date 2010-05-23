@@ -1,25 +1,38 @@
 package a8bot::Plugin::WebTitle;
 use Moose;
-use LWP::Simple qw /get $ua/;
-use Sys::SigAction qw /timeout_call/;
+use LWP::UserAgent;
+use Sys::SigAction 'timeout_call';
 with 'a8bot::Plugin';
+
+has 'ua' => (
+	is	=> 'ro',
+	isa	=> 'LWP::UserAgent',
+	default	=> sub { LWP::UserAgent->new },
+);
 
 sub BUILD {
 	my $self = shift;
-	$self->passive_cb(sub { pubmsg(@_) });
+	$self->ua->max_size(1024);
+	$self->passive_cb(sub { pubmsg($self, @_) });
 }
 
 sub pubmsg {
-	my (%data) = @_;
+	my ($self, %data) = @_;
 	if ($data{msg} =~ /(http:\/\/[^ ]+)/) {
-		$ua->max_size(1024);
-		our $site;
-		if (timeout_call(8, sub {$site = get($1)})){
+		my $site;
+		if (timeout_call(8, sub { $site = $self->ua->get($1) })){
 			return undef;
 		} else {
-			my ($title) = $site =~ /<title>([^<]+)<\/title>/i;
-			$title =~ s/\n/ /g;
-			return "[ $title ]" if $title;
+			if ($site->is_success) {
+				$site = $site->decoded_content;
+				my ($title) = $site =~ /<title>([^<]+)<\/title>/i;
+				if ($title) {
+					$title =~ s/\n//g;
+					return "[ $title ]";
+				}
+			} else {
+				return '[ '.$site->status_line.' ]';
+			}
 		}
 	}
 	return undef;

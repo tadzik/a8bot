@@ -2,6 +2,6 @@ Required modules:
 	Moose
 	MooseX::NonMoose
 	AnyEvent::IRC
-	LWP::Simple (for WebTitle plugin)
+	LWP (for WebTitle plugin)
 	Sys::SigAction (for WebTitle plugin)
 	Hash::MultiValue (for Powiedz plugin)
