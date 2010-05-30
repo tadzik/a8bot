@@ -24,9 +24,9 @@ sub pubmsg {
 	my $pres = $res->{responseData}->{results}->[0];
 	if ($pres) {
 		decode_entities($pres->{titleNoFormatting});
-		return encode('utf8', "$data{nick}: $pres->{titleNoFormatting} -- $pres->{unescapedUrl}");
+		return encode('utf8', "$data{nick}: [ $pres->{titleNoFormatting} ] -- $pres->{unescapedUrl}");
 	} else {
-		return "$data{nick}: nic nie znaleziono";
+		return "$data{nick}: nic nie znaleziono.";
 	}
 }
 

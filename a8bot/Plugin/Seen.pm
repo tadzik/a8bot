@@ -35,10 +35,10 @@ sub check {
 	my $who = $data{args}->[0];
 	my $res = $self->get_entry($who);
 	if (defined $res) {
-		return "$data{nick}: $who was last seen " .
-			"on $res->[0] -- \"$res->[1]\"";
+		return "$data{nick}: $who był ostatnio widziany " .
+			"$res->[0] -- \"$res->[1]\".";
 	} else {
-		return "$data{nick}: I have not seen $who";
+		return "$data{nick}: Nie miałem przyjemności spotkać $who.";
 	}
 }
 
