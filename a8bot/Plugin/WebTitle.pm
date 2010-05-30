@@ -28,7 +28,7 @@ sub pubmsg {
 				$site = $site->decoded_content;
 				my ($title) = $site =~ /<title>([^<]+)<\/title>/i;
 				if ($title) {
-					$title =~ s/\s//g;
+					$title =~ s/\s/ /g;
 					return encode('utf-8', "[ $title ]");
 				}
 			} else {
