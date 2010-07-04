@@ -6,6 +6,7 @@ use Moose;
 use MooseX::NonMoose;
 use AnyEvent;
 use AnyEvent::IRC::Client;
+use Data::Dump 'dump';
 
 extends 'AnyEvent::IRC::Client';
 
@@ -81,6 +82,9 @@ sub BUILD {
 					{ nick => $self->nick,
 					password => $self->passwd },
 				);
+				$self->send_srv(JOIN => $self->channel);
+			} else {
+				AnyEvent->condvar->end;
 			}
 		},
 		error => sub {
@@ -89,8 +93,12 @@ sub BUILD {
 		},
 		publicmsg => sub {
 			my $params = $_[2];
-			foreach my $plugin ($self->list_plugins) {
-				$plugin->pubmsg_cb($params);
+			if ($params->{command} eq 'NOTICE') {
+				say "NOTICE: params->{params}->[1]";
+			} else {
+				foreach my $plugin ($self->list_plugins) {
+					$plugin->pubmsg_cb($params);
+				}
 			}
 		},
 		registered => sub {
@@ -103,17 +111,20 @@ sub BUILD {
 				$plugin->registered_cb;
 			}
 		},
+		'irc_*' => sub {
+			my $msg = $_[1];
+			$self->log("Got generic irc event: ".dump($msg)."\n");
+		}
 	);
 }
 
-#sub cleanup {
+sub cleanup {
 #	my $self = shift;
 #	say "Exiting";
 #	$self->wantconnection(0);
 #	$self->disconnect;
-#	# TODO: Let the plugins know
-#	exit 0;
-#}
+	# TODO: Let the plugins know
+}
 
 sub load_plugin {
 	my ($self, $plugin) = @_;
