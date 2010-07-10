@@ -14,6 +14,7 @@ has 'ua' => (
 sub BUILD {
 	my $self = shift;
 	$self->ua->max_size(1024);
+	$self->ua->agent('Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/534.2 (KHTML, like Gecko) Chrome/6.0.452.0 Safari/534.2');
 	$self->passive_cb(sub { pubmsg($self, @_) });
 }
 
